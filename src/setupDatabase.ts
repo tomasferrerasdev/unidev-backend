@@ -1,12 +1,11 @@
 import mongoose, { connect } from 'mongoose';
+import { config } from './config';
 
 export default () => {
   const connect = () => {
     mongoose.set('strictQuery', false);
     mongoose
-      .connect(
-        'mongodb+srv://unidev-admin:7sGOJi4RKreGxfMh@cluster0.tmko3xy.mongodb.net/test'
-      )
+      .connect(`${config.DATABASE_URL}`)
       .then(() => {
         console.log(`successfully connected to database.`);
       })
