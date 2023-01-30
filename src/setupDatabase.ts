@@ -10,10 +10,10 @@ export default () => {
     mongoose
       .connect(`${config.DATABASE_URL}`)
       .then(() => {
-        log.info(`successfully connected to database.`);
+        log.info('successfully connected to database.');
       })
       .catch((error) => {
-        log.error(`error connecting to database.`, error);
+        log.error('error connecting to database.', error);
         return process.exit(1);
       });
   };
