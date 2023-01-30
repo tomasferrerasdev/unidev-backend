@@ -19,6 +19,11 @@ import { config } from './config';
 import { Server } from 'socket.io';
 import { createClient } from 'redis';
 import { createAdapter } from '@socket.io/redis-adapter';
+import applicationRoutes from './routes';
+import {
+  CustomError,
+  IErrorResponse,
+} from './shared/globals/helpers/error-handler';
 
 const SERVER_PORT = 5000;
 
@@ -64,8 +69,31 @@ export class UnidevServer {
     app.use(urlencoded({ extended: true, limit: '50mb' }));
   }
 
-  private routesMiddleware(app: Application): void {}
-  private globalErrorHandler(app: Application): void {}
+  private routesMiddleware(app: Application): void {
+    applicationRoutes(app);
+  }
+
+  private globalErrorHandler(app: Application): void {
+    app.all('*', (req: Request, res: Response) => {
+      res
+        .status(HTTP_STATUS.NOT_FOUND)
+        .json({ message: `${req.originalUrl} not found` });
+    });
+    app.use(
+      (
+        error: IErrorResponse,
+        _req: Request,
+        res: Response,
+        next: NextFunction
+      ) => {
+        console.log(error);
+        if (error instanceof CustomError)
+          res.status(error.statusCode).json(error.serializeErrors());
+
+        next();
+      }
+    );
+  }
 
   private async startServer(app: Application): Promise<void> {
     try {
