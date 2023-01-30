@@ -1,5 +1,8 @@
+import Logger from 'bunyan';
 import mongoose, { connect } from 'mongoose';
 import { config } from './config';
+
+const log: Logger = config.createLogger('setupDatabase');
 
 export default () => {
   const connect = () => {
@@ -7,10 +10,10 @@ export default () => {
     mongoose
       .connect(`${config.DATABASE_URL}`)
       .then(() => {
-        console.log(`successfully connected to database.`);
+        log.info(`successfully connected to database.`);
       })
       .catch((error) => {
-        console.log(`error connecting to database.`, error);
+        log.error(`error connecting to database.`, error);
         return process.exit(1);
       });
   };
